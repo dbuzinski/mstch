@@ -1,0 +1,21 @@
+name: Build and test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: bazel-contrib/setup-bazel@0.14.0
+      with:
+        # Avoid downloading Bazel every time.
+        bazelisk-cache: true
+        # Store build cache per workflow.
+        disk-cache: ${{ github.workflow }}
+        # Share repository cache between workflows.
+        repository-cache: true
+    - run: bazelisk test --test_output=all //...

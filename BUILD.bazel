@@ -1,0 +1,24 @@
+# mstch library
+cc_library(
+    name = "mstch",
+    visibility = ["//visibility:public"],
+    srcs = glob(["src/**/*.cpp"]),
+    hdrs = glob(["include/**/*.hpp", "src/**/*.hpp"]),
+    includes = ["include", "src"],
+    deps = ["@boost.variant"],
+)
+
+cc_test(
+    name = "spec_tests",
+    srcs = glob([
+        "test/spec_tests.cpp",
+    ]),
+    data = ["@mustache_spec//:yml_specs"],
+    deps = [
+        ":mstch",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "@yaml-cpp",
+        "@bazel_tools//tools/cpp/runfiles",
+    ],
+)

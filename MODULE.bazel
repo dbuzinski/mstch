@@ -1,0 +1,21 @@
+# https://bazel.build/external/overview#bzlmod
+module(name = "mstch", version = "1.1.0")
+
+# dependencies
+bazel_dep(name = "boost.variant", version = "1.87.0")
+bazel_dep(name = "googletest", version = "1.16.0")
+bazel_dep(name = "yaml-cpp", version = "0.8.0")
+bazel_dep(name = "aspect_bazel_lib", version = "2.10.0")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+http_archive(
+    name = "mustache_spec",
+    url = "https://github.com/mustache/spec/archive/refs/tags/v1.4.2.tar.gz",
+    integrity = "sha256-q7vMHCRFGmWr9ULs/3WJNSQwsuFSPtojPaP/pHes1mM=",
+    build_file_content = """
+filegroup(
+    name = "yml_specs",
+    srcs = glob(["spec-1.4.2/specs/*.yml"]),
+    visibility = ["//visibility:public"]
+)""",
+)
