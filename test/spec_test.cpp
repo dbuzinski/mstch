@@ -69,6 +69,7 @@ struct SpecTestParam {
     Json::Value root;
     Json::Reader reader;
     std::string rawJson = load_file(file_path);
+    std::cout << rawJson << std::endl;
     reader.parse(rawJson, root);
 
     for (const Json::Value &test : root["tests"]) {
