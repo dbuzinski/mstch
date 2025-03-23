@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 #include <json/json.h>
+#include "tools/cpp/runfiles/runfiles.h"
 
 #include "test/data/specs_lambdas.hpp"
 #include "mstch/mstch.hpp"
@@ -40,13 +41,6 @@ mstch::node json_to_mstch(const Json::Value &value) {
   return {};
 }
 
-std::string load_file(std::string file_path) {
-  const std::ifstream input_stream(file_path.c_str());
-  std::stringstream buffer;
-  buffer << input_stream.rdbuf();
-  return buffer.str();
-}
-
 struct SpecTestParam {
   std::string name;
   std::string tmpl;
@@ -68,8 +62,14 @@ struct SpecTestParam {
 
     Json::Value root;
     Json::Reader reader;
-    std::string rawJson = load_file(file_path);
-    std::cout << rawJson << std::endl;
+    std::string error;
+    std::unique_ptr<bazel::tools::cpp::runfiles::Runfiles> runfiles(
+        bazel::tools::cpp::runfiles::Runfiles::CreateForTest(&error));
+    std::string runfile_path = runfiles->Rlocation("mstch/" + file_path);
+    std::ifstream input_stream(runfile_path.c_str());
+    std::stringstream buffer;
+    buffer << input_stream.rdbuf();
+    std::string rawJson = buffer.str();
     reader.parse(rawJson, root);
 
     for (const Json::Value &test : root["tests"]) {

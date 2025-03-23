@@ -48,5 +48,6 @@ cc_test(
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@jsoncpp",
+        "@bazel_tools//tools/cpp/runfiles",
     ],
 )
