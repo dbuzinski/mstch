@@ -1,15 +1,13 @@
 #include <fstream>
-#include <ios>
 #include <iostream>
 #include <map>
 #include <ostream>
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <stdexcept>
 
 #include <gtest/gtest.h>
-#include "json/json.h"
+#include <json/json.h>
 
 #include "test/data/specs_lambdas.hpp"
 #include "mstch/mstch.hpp"
@@ -42,6 +40,13 @@ mstch::node json_to_mstch(const Json::Value &value) {
   return {};
 }
 
+std::string load_file(std::string file_path) {
+  const std::ifstream input_stream(file_path.c_str());
+  std::stringstream buffer;
+  buffer << input_stream.rdbuf();
+  return buffer.str();
+}
+
 struct SpecTestParam {
   std::string name;
   std::string tmpl;
@@ -61,9 +66,10 @@ struct SpecTestParam {
   static std::vector<SpecTestParam> from_json_file(const std::string &file_path) {
     std::vector<SpecTestParam> params;
 
-    std::ifstream input_stream(file_path);
     Json::Value root;
-    input_stream >> root;
+    Json::Reader reader;
+    std::string rawJson = load_file(file_path);
+    reader.parse(rawJson, root);
 
     for (const Json::Value &test : root["tests"]) {
       SpecTestParam param;
