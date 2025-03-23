@@ -720,30 +720,28 @@ TEST(RenderTest, SectionFunctionsInPartials) {
 
 TEST(RenderTest, StringAsContext) {
   std::string input{"<ul>\n"
-                                             "{{#a_list}}\n"
-                                             "  <li>{{a_string}}/{{.}}</li>\n"
-                                             "{{/a_list}}\n"
-                                             "</ul>"};
-  mstch::node data = mstch::map{
-    {"a_string", std::string{"aa"}},
-    {"a_list", mstch::array{std::string{"a"},std::string{"b"},std::string{"c"}}}
-  };
+                    "{{#a_list}}\n"
+                    "  <li>{{a_string}}/{{.}}</li>\n"
+                    "{{/a_list}}\n"
+                    "</ul>"};
+  mstch::node data =
+      mstch::map{{"a_string", std::string{"aa"}},
+                 {"a_list", mstch::array{std::string{"a"}, std::string{"b"},
+                                         std::string{"c"}}}};
 
   std::string expected{"<ul>\n"
-                                        "  <li>aa/a</li>\n"
-                                        "  <li>aa/b</li>\n"
-                                        "  <li>aa/c</li>\n"
-                                        "</ul>"};
+                       "  <li>aa/a</li>\n"
+                       "  <li>aa/b</li>\n"
+                       "  <li>aa/c</li>\n"
+                       "</ul>"};
   std::string actual = mstch::render(input, data);
   EXPECT_EQ(expected, actual);
 }
 
 TEST(RenderTest, TwoInARow) {
   std::string input = "{{greeting}}, {{name}}!\n";
-  mstch::node data = mstch::map{
-    {"name", std::string{"Joe"}},
-    {"greeting", std::string{"Welcome"}}
-  };
+  mstch::node data = mstch::map{{"name", std::string{"Joe"}},
+                                {"greeting", std::string{"Welcome"}}};
 
   std::string expected = "Welcome, Joe!\n";
   std::string actual = mstch::render(input, data);
@@ -797,4 +795,3 @@ TEST(RenderTest, ZeroView) {
   std::string actual = mstch::render(input, data);
   EXPECT_EQ(expected, actual);
 }
-

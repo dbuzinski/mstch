@@ -9,9 +9,9 @@ cc_library(
 )
 
 cc_test(
-    name = "unit_tests",
+    name = "render_test",
     srcs = glob([
-        "test/unit_tests.cpp",
+        "test/render_test.cpp",
     ]),
     deps = [
         ":mstch",
@@ -20,17 +20,22 @@ cc_test(
     ],
 )
 
+filegroup(
+    name = "json_specs",
+    srcs = glob(["test/spec/specs/*.json"]),
+    visibility = ["//visibility:public"],
+)
+
 cc_test(
-    name = "spec_tests",
+    name = "spec_test",
     srcs = glob([
-        "test/spec_tests.cpp",
+        "test/spec_test.cpp",
     ]),
-    data = ["@mustache_spec//:yml_specs"],
+    data = [":json_specs"],
     deps = [
         ":mstch",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
-        "@yaml-cpp",
-        "@bazel_tools//tools/cpp/runfiles",
+        "@jsoncpp",
     ],
 )
