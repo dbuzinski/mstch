@@ -66,7 +66,10 @@ struct SpecTestParam {
     Json::Value root;
     Json::CharReaderBuilder builder;
     std::string errs;
-    Json::parseFromStream(builder, ifs, &root, &errs);
+    bool parsingSuccessful = Json::parseFromStream(builder, ifs, &root, &errs);
+    if (!parsingSuccessful) {
+      throw std::runtime_error("Failed to parse JSON: " + errs);
+    }
 
     for (const Json::Value &test : root["tests"]) {
       SpecTestParam param;
