@@ -1,4 +1,5 @@
 #include <fstream>
+#include <ios>
 #include <iostream>
 #include <map>
 #include <ostream>
@@ -59,17 +60,12 @@ struct SpecTestParam {
   static std::vector<SpecTestParam> from_json_file(const std::string &filename) {
     std::vector<SpecTestParam> params;
 
-    std::ifstream ifs(filename, std::ifstream::binary);
+    std::ifstream ifs(filename, std::ios_base::binary);
     if (!ifs.is_open()) {
       throw std::runtime_error("Could not open file: " + filename);
     }
     Json::Value root;
-    Json::CharReaderBuilder builder;
-    std::string errs;
-    bool parsingSuccessful = Json::parseFromStream(builder, ifs, &root, &errs);
-    if (!parsingSuccessful) {
-      throw std::runtime_error("Failed to parse JSON: " + errs);
-    }
+    ifs >> root;
 
     for (const Json::Value &test : root["tests"]) {
       SpecTestParam param;
