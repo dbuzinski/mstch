@@ -61,6 +61,9 @@ struct SpecTestParam {
   static std::vector<SpecTestParam> from_json_file(const std::string &file_name) {
     std::vector<SpecTestParam> params;
 
+    #ifdef _WIN32
+      std::replace(file_name.begin(), file_name.end(), '/', '\\');
+    #endif
     std::ifstream ifs(file_name, std::ios_base::binary);
     if (!ifs.is_open()) {
       throw std::runtime_error("Could not open file: " + file_name);
