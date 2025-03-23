@@ -7,8 +7,12 @@
 #include "test/mstch_test_data.hpp"
 
 
-std::string load_file(std::string file_path) {
-  const std::ifstream input_stream(file_path, std::ios_base::binary);
+std::string load_file(std::string file_name) {
+  std::string file_path = file_name;
+  #ifdef _WIN32
+  std::replace(file_path.begin(), file_path.end(), '/', '\\');
+  #endif
+  const std::ifstream input_stream(file_path, std::ifstream::binary);
   if (input_stream.fail()) {
       throw std::runtime_error("Failed to open file");
   }
