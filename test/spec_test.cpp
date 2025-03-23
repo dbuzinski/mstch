@@ -9,6 +9,7 @@
 
 #include <gtest/gtest.h>
 #include "json/json.h"
+
 #include "mstch/mstch.hpp"
 
 using ::testing::ValuesIn;
@@ -63,7 +64,9 @@ struct SpecTestParam {
       throw std::runtime_error("Could not open file: " + filename);
     }
     Json::Value root;
-    ifs >> root;
+    Json::CharReaderBuilder builder;
+    std::string errs;
+    Json::parseFromStream(builder, ifs, &root, &errs);
 
     for (const Json::Value &test : root["tests"]) {
       SpecTestParam param;
