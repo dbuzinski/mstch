@@ -23,4 +23,4 @@ jobs:
         disk-cache: ${{ github.workflow }}
         # Share repository cache between workflows.
         repository-cache: true
-    - run: bazelisk test --test_output=all //...
+    - run: bazelisk test --test_output=all //... --cxxopt='-std=c++17'
