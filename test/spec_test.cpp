@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 #include "json/json.h"
 
+#include "test/data/specs_lambdas.hpp"
 #include "mstch/mstch.hpp"
 
 using ::testing::ValuesIn;

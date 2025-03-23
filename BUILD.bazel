@@ -8,9 +8,24 @@ cc_library(
     deps = ["@boost.variant"],
 )
 
+filegroup(
+    name = "test_data",
+    srcs = glob([
+        "test/data/*.mustache",
+        "test/data/*.partial",
+        "test/data/*.txt",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
 cc_test(
     name = "mstch_test",
-    srcs = ["test/mstch_test.cpp"],
+    srcs = glob([
+        "test/mstch_test.cpp",
+        "test/mstch_test_data.hpp",
+        "test/data/*.hpp",
+    ]),
+    data = [":test_data"],
     deps = [
         ":mstch",
         "@googletest//:gtest",
@@ -26,7 +41,7 @@ filegroup(
 
 cc_test(
     name = "spec_test",
-    srcs = ["test/spec_test.cpp"],
+    srcs = ["test/spec_test.cpp", "test/data/specs_lambdas.hpp"],
     data = [":json_specs"],
     deps = [
         ":mstch",
