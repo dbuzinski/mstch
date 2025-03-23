@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -61,12 +60,10 @@ struct SpecTestParam {
 
   static std::vector<SpecTestParam> from_json_file(const std::string &file_name) {
     std::vector<SpecTestParam> params;
-    std::filesystem::path file_path(file_name);
-    file_path.make_preferred();
 
-    std::ifstream ifs(file_path.string(), std::ios_base::binary);
+    std::ifstream ifs(file_name, std::ios_base::binary);
     if (!ifs.is_open()) {
-      throw std::runtime_error("Could not open file: " + file_path.string());
+      throw std::runtime_error("Could not open file: " + file_name);
     }
     Json::Value root;
     ifs >> root;
