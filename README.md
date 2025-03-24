@@ -218,14 +218,10 @@ mstch::config::escape = [](const std::string& str) -> std::string {
 
 ## Using mstch in your project
 
-If you are using Bazel, you can include mstch in your project by adding it as a dependency in your `WORKSPACE` file:
+If you are using Bazel, you can include mstch in your project by adding it as a dependency in your `MODULE.bazel` file:
 
 ```python
-git_repository(
-    name = "mstch",
-    remote = "https://github.com/yourusername/mstch.git",
-    branch = "main",
-)
+bazel_dep(name = "mstch", version = "2.0.0")
 ```
 
 Then in your `BUILD` file:
