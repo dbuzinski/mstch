@@ -95,7 +95,7 @@ class lambda_t {
 class node;
 using object = internal::object_t<node>;
 using lambda = internal::lambda_t<node>;
-using map = std::map<std::string, node>;
+using map = std::map<const std::string, node>;
 using array = std::vector<node>;
 
 class node : public std::variant<

@@ -12,7 +12,7 @@ class render_node {
  public:
   enum class flag { none, escape_html };
   render_node(render_context& ctx, flag p_flag = flag::none):
-      m_ctx(ctx), m_flag(p_flag)
+    m_ctx(ctx), m_flag(p_flag)
   {
   }
 
@@ -40,7 +40,7 @@ class render_node {
       render_node no_escape_visitor(m_ctx, flag::none);
       return std::visit(no_escape_visitor, n);
     });
-    
+
     if (lambda_result.find("{{") != std::string::npos) {
       template_type interpreted{lambda_result};
       return render_context::push(m_ctx).render(interpreted);

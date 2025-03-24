@@ -28,7 +28,7 @@ class render_section {
     std::string section_str;
     for (auto& token: m_section)
       section_str += token.raw();
-    template_type interpreted{fun([this](const mstch::node& n) -> std::string {
+    template_type interpreted{fun([this](const mstch::node& n) {
       return std::visit(render_node(m_ctx), n);
     }, section_str), m_delims};
     return render_context::push(m_ctx).render(interpreted);
