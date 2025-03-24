@@ -1,11 +1,25 @@
 # mstch library
+load("@bazel_skylib//lib:selects.bzl", "selects")
+
+# Define a config_setting for Windows
+config_setting(
+    name = "windows",
+    constraint_values = ["@platforms//os:windows"],
+)
+
+# Platform-specific compiler flags
+CPP17_FLAGS = select({
+    ":windows": ["/std:c++17", "/EHsc"],  # MSVC flags
+    "//conditions:default": ["-std=c++17"],  # GCC/Clang flags
+})
+
 cc_library(
     name = "mstch",
     visibility = ["//visibility:public"],
     srcs = glob(["src/**/*.cpp"]),
     hdrs = glob(["include/**/*.hpp", "src/**/*.hpp"]),
     includes = ["include", "src"],
-    copts = ["-std=c++17"],
+    copts = CPP17_FLAGS,
 )
 
 filegroup(
@@ -25,7 +39,7 @@ cc_test(
         "test/mstch_test_data.hpp",
         "test/data/*.hpp",
     ]),
-    copts = ["-std=c++17"],
+    copts = CPP17_FLAGS,
     data = [":test_data"],
     deps = [
         ":mstch",
@@ -46,7 +60,7 @@ cc_test(
         "test/spec_test.cpp",
         "test/specs_lambdas.hpp"
     ],
-    copts = ["-std=c++17"],
+    copts = CPP17_FLAGS,
     data = [":json_specs"],
     deps = [
         ":mstch",
