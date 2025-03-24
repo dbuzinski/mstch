@@ -1,0 +1,25 @@
+# https://bazel.build/external/overview#bzlmod
+module(name = "mstch", version = "1.1.0")
+
+
+# dependencies
+bazel_dep(name = "boost.variant", version = "1.87.0")
+
+# test dependencies
+bazel_dep(name = "googletest", version = "1.16.0")
+bazel_dep(name = "jsoncpp", version = "1.9.6")
+
+# dev dependencies
+# Hedron's Compile Commands Extractor for Bazel
+# https://github.com/hedronvision/bazel-compile-commands-extractor
+# run with `bazel run @hedron_compile_commands//:refresh_all`
+bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
+git_override(
+    module_name = "hedron_compile_commands",
+    # using fork until fix is merged:
+    # https://github.com/hedronvision/bazel-compile-commands-extractor/pull/219
+    remote = "https://github.com/mikael-s-persson/bazel-compile-commands-extractor",
+    # remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
+    commit = "f5fbd4cee671d8d908f37c83abaf70fba5928fc7"
+)
+
