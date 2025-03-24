@@ -15,6 +15,16 @@ cc_library(
     copts = _cpp17_flags,
 )
 
+cc_binary(
+    name = "benchmark",
+    srcs = ["benchmark/benchmark_main.cpp"],
+    copts = _cpp17_flags,
+    deps = [
+        ":mstch",
+        "@google_benchmark//:benchmark",
+    ],
+)
+
 filegroup(
     name = "_mstch_test_data",
     srcs = glob([
