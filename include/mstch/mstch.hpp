@@ -105,12 +105,12 @@ class node : public std::variant<
     map,
     array> {
 public:
-    using std::variant<
-        std::nullptr_t, std::string, int, double, bool,
-        lambda,
-        std::shared_ptr<object>,
-        map,
-        array>::variant;
+  using std::variant<
+      std::nullptr_t, std::string, int, double, bool,
+      lambda,
+      std::shared_ptr<object>,
+      map,
+      array>::variant;
 };
 
 std::string render(
