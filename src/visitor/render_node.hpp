@@ -1,7 +1,6 @@
 #pragma once
 
 #include <sstream>
-#include <boost/variant/static_visitor.hpp>
 
 #include "render_context.hpp"
 #include "mstch/mstch.hpp"
@@ -9,7 +8,7 @@
 
 namespace mstch {
 
-class render_node: public boost::static_visitor<std::string> {
+class render_node {
  public:
   enum class flag { none, escape_html };
   render_node(render_context& ctx, flag p_flag = flag::none):
@@ -37,11 +36,17 @@ class render_node: public boost::static_visitor<std::string> {
   }
 
   std::string operator()(const lambda& value) const {
-    template_type interpreted{value([this](const mstch::node& n) {
-      return visit(render_node(m_ctx), n);
-    })};
-    auto rendered = render_context::push(m_ctx).render(interpreted);
-    return (m_flag == flag::escape_html) ? html_escape(rendered) : rendered;
+    std::string lambda_result = value([this](const mstch::node& n) -> std::string {
+      render_node no_escape_visitor(m_ctx, flag::none);
+      return std::visit(no_escape_visitor, n);
+    });
+    
+    if (lambda_result.find("{{") != std::string::npos) {
+      template_type interpreted{lambda_result};
+      return render_context::push(m_ctx).render(interpreted);
+    } else {
+      return (m_flag == flag::escape_html) ? html_escape(lambda_result) : lambda_result;
+    }
   }
 
   std::string operator()(const std::string& value) const {

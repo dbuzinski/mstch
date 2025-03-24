@@ -5,14 +5,18 @@
 #include <string>
 #include <memory>
 #include <functional>
-
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace mstch {
 
 struct config {
   static std::function<std::string(const std::string&)> escape;
 };
+
+// Forward declarations
+class node;
+using map = std::map<const std::string, node>;
+using array = std::vector<node>;
 
 namespace internal {
 
@@ -93,16 +97,24 @@ class lambda_t {
 
 }
 
-using node = boost::make_recursive_variant<
+// Use the forward declarations to define node
+class node : public std::variant<
     std::nullptr_t, std::string, int, double, bool,
-    internal::lambda_t<boost::recursive_variant_>,
-    std::shared_ptr<internal::object_t<boost::recursive_variant_>>,
-    std::map<const std::string, boost::recursive_variant_>,
-    std::vector<boost::recursive_variant_>>::type;
+    internal::lambda_t<node>,
+    std::shared_ptr<internal::object_t<node>>,
+    map,
+    array> {
+public:
+    using std::variant<
+        std::nullptr_t, std::string, int, double, bool,
+        internal::lambda_t<node>,
+        std::shared_ptr<internal::object_t<node>>,
+        map,
+        array>::variant;
+};
+
 using object = internal::object_t<node>;
 using lambda = internal::lambda_t<node>;
-using map = std::map<const std::string, node>;
-using array = std::vector<node>;
 
 std::string render(
     const std::string& tmplt,

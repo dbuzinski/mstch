@@ -5,7 +5,7 @@ cc_library(
     srcs = glob(["src/**/*.cpp"]),
     hdrs = glob(["include/**/*.hpp", "src/**/*.hpp"]),
     includes = ["include", "src"],
-    deps = ["@boost.variant"],
+    copts = ["-std=c++17"],
 )
 
 filegroup(
@@ -25,6 +25,7 @@ cc_test(
         "test/mstch_test_data.hpp",
         "test/data/*.hpp",
     ]),
+    copts = ["-std=c++17"],
     data = [":test_data"],
     deps = [
         ":mstch",
@@ -45,6 +46,7 @@ cc_test(
         "test/spec_test.cpp",
         "test/specs_lambdas.hpp"
     ],
+    copts = ["-std=c++17"],
     data = [":json_specs"],
     deps = [
         ":mstch",
@@ -52,6 +54,5 @@ cc_test(
         "@googletest//:gtest_main",
         "@jsoncpp",
         "@bazel_tools//tools/cpp/runfiles",
-        "@boost.variant",
     ],
 )

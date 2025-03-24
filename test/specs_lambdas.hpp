@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mstch/mstch.hpp"
-#include <boost/variant.hpp>
+#include <variant>
 
 std::map<std::string, mstch::node> specs_lambdas {
     {"Interpolation", mstch::lambda{[](const std::string&) -> mstch::node {

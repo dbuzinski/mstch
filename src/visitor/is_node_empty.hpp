@@ -1,12 +1,10 @@
 #pragma once
 
-#include <boost/variant/static_visitor.hpp>
-
 #include "mstch/mstch.hpp"
 
 namespace mstch {
 
-class is_node_empty: public boost::static_visitor<bool> {
+class is_node_empty {
  public:
   template<class T>
   bool operator()(const T&) const {
@@ -35,6 +33,18 @@ class is_node_empty: public boost::static_visitor<bool> {
 
   bool operator()(const array& array) const {
     return array.size() == 0;
+  }
+
+  bool operator()(const map& /* map */) const {
+    return false;
+  }
+
+  bool operator()(const lambda& /* lambda */) const {
+    return false;
+  }
+
+  bool operator()(const std::shared_ptr<object>& /* object */) const {
+    return false;
   }
 };
 

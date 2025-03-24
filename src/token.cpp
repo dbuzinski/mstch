@@ -14,7 +14,6 @@ token::type token::token_info(char c) {
     default: return type::variable;
   }
 }
-
 token::token(const std::string& str, std::size_t left, std::size_t right):
     m_raw(str), m_eol(false), m_ws_only(false)
 {
@@ -40,3 +39,4 @@ token::token(const std::string& str, std::size_t left, std::size_t right):
     m_ws_only = (str.find_first_not_of(" \r\n\t") == std::string::npos);
   }
 }
+
