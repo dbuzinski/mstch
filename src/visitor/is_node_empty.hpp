@@ -34,18 +34,6 @@ class is_node_empty {
   bool operator()(const array& array) const {
     return array.size() == 0;
   }
-
-  bool operator()(const map& /* map */) const {
-    return false;
-  }
-
-  bool operator()(const lambda& /* lambda */) const {
-    return false;
-  }
-
-  bool operator()(const std::shared_ptr<object>& /* object */) const {
-    return false;
-  }
 };
 
 }

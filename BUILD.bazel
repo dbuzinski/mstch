@@ -7,7 +7,6 @@ config_setting(
     constraint_values = ["@platforms//os:windows"],
 )
 
-# Platform-specific compiler flags
 CPP17_FLAGS = select({
     ":windows": ["/std:c++17", "/EHsc"],  # MSVC flags
     "//conditions:default": ["-std=c++17"],  # GCC/Clang flags

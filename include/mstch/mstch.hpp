@@ -13,11 +13,6 @@ struct config {
   static std::function<std::string(const std::string&)> escape;
 };
 
-// Forward declarations
-class node;
-using map = std::map<const std::string, node>;
-using array = std::vector<node>;
-
 namespace internal {
 
 template<class N>
@@ -97,24 +92,26 @@ class lambda_t {
 
 }
 
-// Use the forward declarations to define node
+class node;
+using object = internal::object_t<node>;
+using lambda = internal::lambda_t<node>;
+using map = std::map<std::string, node>;
+using array = std::vector<node>;
+
 class node : public std::variant<
     std::nullptr_t, std::string, int, double, bool,
-    internal::lambda_t<node>,
-    std::shared_ptr<internal::object_t<node>>,
+    lambda,
+    std::shared_ptr<object>,
     map,
     array> {
 public:
     using std::variant<
         std::nullptr_t, std::string, int, double, bool,
-        internal::lambda_t<node>,
-        std::shared_ptr<internal::object_t<node>>,
+        lambda,
+        std::shared_ptr<object>,
         map,
         array>::variant;
 };
-
-using object = internal::object_t<node>;
-using lambda = internal::lambda_t<node>;
 
 std::string render(
     const std::string& tmplt,
