@@ -41,7 +41,10 @@ filegroup(
 
 cc_test(
     name = "spec_test",
-    srcs = ["test/spec_test.cpp", "test/data/specs_lambdas.hpp"],
+    srcs = [
+        "test/spec_test.cpp",
+        "test/specs_lambdas.hpp"
+    ],
     data = [":json_specs"],
     deps = [
         ":mstch",
@@ -49,5 +52,6 @@ cc_test(
         "@googletest//:gtest_main",
         "@jsoncpp",
         "@bazel_tools//tools/cpp/runfiles",
+        "@boost.variant",
     ],
 )

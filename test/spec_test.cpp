@@ -10,12 +10,12 @@
 #include <json/json.h>
 #include "tools/cpp/runfiles/runfiles.h"
 
-#include "test/data/specs_lambdas.hpp"
+#include "test/specs_lambdas.hpp"
 #include "mstch/mstch.hpp"
 
 using ::testing::ValuesIn;
 
-mstch::node json_to_mstch(const Json::Value &value) {
+mstch::node json_to_mstch(const Json::Value &value, const std::string &name) {
   if (value.isBool()) {
     return value.asBool();
   } else if (value.isInt()) {
@@ -27,21 +27,29 @@ mstch::node json_to_mstch(const Json::Value &value) {
   } else if (value.isArray()) {
     mstch::array arr;
     for (Json::ArrayIndex i = 0; i < value.size(); ++i) {
-      arr.push_back(json_to_mstch(value[i]));
+      arr.push_back(json_to_mstch(value[i], name));
     }
     return arr;
   } else if (value.isObject()) {
     mstch::map m;
     std::vector<std::string> keys = value.getMemberNames();
     for (const auto &key : keys) {
-      m[key] = json_to_mstch(value[key]);
+      if (key == "lambda") {
+        auto it = specs_lambdas.find(name);
+        if (it != specs_lambdas.end()) {
+          m.insert(std::make_pair(key, it->second));
+        }
+      } else {
+        m[key] = json_to_mstch(value[key], name);
+      }
     }
     return m;
   }
   return {};
 }
 
-struct SpecTestParam {
+class SpecTestParam {
+public:
   std::string name;
   std::string tmpl;
   std::string expected;
@@ -61,23 +69,16 @@ struct SpecTestParam {
     std::vector<SpecTestParam> params;
 
     Json::Value root;
-    Json::Reader reader;
-    std::string error;
-    std::unique_ptr<bazel::tools::cpp::runfiles::Runfiles> runfiles(
-        bazel::tools::cpp::runfiles::Runfiles::CreateForTest(&error));
-    std::string runfile_path = runfiles->Rlocation("mstch/" + file_path);
-    std::ifstream input_stream(runfile_path.c_str());
-    std::stringstream buffer;
-    buffer << input_stream.rdbuf();
-    std::string rawJson = buffer.str();
-    reader.parse(rawJson, root);
+    std::ifstream input_stream(
+        bazel::tools::cpp::runfiles::Runfiles::CreateForTest()->Rlocation("mstch/" + file_path));
+    Json::Reader().parse(input_stream, root);
 
     for (const Json::Value &test : root["tests"]) {
       SpecTestParam param;
       param.name = test["name"].asString();
       param.tmpl = test["template"].asString();
       param.expected = test["expected"].asString();
-      param.data = json_to_mstch(test["data"]);
+      param.data = json_to_mstch(test["data"], param.name);
       std::map<std::string, std::string> partials;
       for (const auto &key : test["partials"].getMemberNames()) {
         partials[key] = test["partials"][key].asString();
@@ -135,4 +136,9 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
     Sections, SpecTest,
     ValuesIn(SpecTestParam::from_json_file("test/spec/specs/sections.json")),
+    name_generator);
+
+INSTANTIATE_TEST_SUITE_P(
+    Lambdas, SpecTest,
+    ValuesIn(SpecTestParam::from_json_file("test/spec/specs/~lambdas.json")),
     name_generator);
