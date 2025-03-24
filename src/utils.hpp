@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <boost/variant/apply_visitor.hpp>
+#include <vector>
+#include <variant>
 
 namespace mstch {
 
@@ -13,11 +14,12 @@ citer first_not_ws(criter begin, criter end);
 std::string html_escape(const std::string& str);
 criter reverse(citer it);
 
-template<class... Args>
-auto visit(Args&&... args) -> decltype(boost::apply_visitor(
-    std::forward<Args>(args)...))
-{
-  return boost::apply_visitor(std::forward<Args>(args)...);
+template<class Visitor, class Visited>
+decltype(auto) visit(Visitor&& visitor, Visited&& node) {
+  return std::visit(std::forward<Visitor>(visitor), std::forward<Visited>(node));
 }
+
+template <typename T, typename U>
+constexpr bool is_v = std::is_same_v<T, U>;
 
 }

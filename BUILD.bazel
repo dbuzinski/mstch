@@ -1,15 +1,22 @@
 # mstch library
+load("@bazel_skylib//lib:selects.bzl", "selects")
+
+_cpp17_flags = select({
+    "@platforms//os:windows": ["/std:c++17", "/EHsc"],
+    "//conditions:default": ["-std=c++17"],
+})
+
 cc_library(
     name = "mstch",
     visibility = ["//visibility:public"],
     srcs = glob(["src/**/*.cpp"]),
     hdrs = glob(["include/**/*.hpp", "src/**/*.hpp"]),
     includes = ["include", "src"],
-    deps = ["@boost.variant"],
+    copts = _cpp17_flags,
 )
 
 filegroup(
-    name = "test_data",
+    name = "_mstch_test_data",
     srcs = glob([
         "test/data/*.mustache",
         "test/data/*.partial",
@@ -25,7 +32,8 @@ cc_test(
         "test/mstch_test_data.hpp",
         "test/data/*.hpp",
     ]),
-    data = [":test_data"],
+    copts = _cpp17_flags,
+    data = [":_mstch_test_data"],
     deps = [
         ":mstch",
         "@googletest//:gtest",
@@ -34,7 +42,7 @@ cc_test(
 )
 
 filegroup(
-    name = "json_specs",
+    name = "_json_specs",
     srcs = glob(["test/spec/specs/*.json"]),
     visibility = ["//visibility:public"],
 )
@@ -45,13 +53,13 @@ cc_test(
         "test/spec_test.cpp",
         "test/specs_lambdas.hpp"
     ],
-    data = [":json_specs"],
+    copts = _cpp17_flags,
+    data = [":_json_specs"],
     deps = [
         ":mstch",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@jsoncpp",
         "@bazel_tools//tools/cpp/runfiles",
-        "@boost.variant",
     ],
 )

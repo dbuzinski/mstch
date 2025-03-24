@@ -4,6 +4,8 @@ module(name = "mstch", version = "1.1.0")
 
 # dependencies
 bazel_dep(name = "boost.variant", version = "1.87.0")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "platforms", version = "0.0.10")
 
 # test dependencies
 bazel_dep(name = "googletest", version = "1.16.0")
