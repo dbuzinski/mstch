@@ -1,25 +1,23 @@
-# mstch - {{mustache}} templates in C++11 
+# mstch - {{mustache}} templates in C++17 
 
 ![mstch logo](http://i.imgur.com/MRyStO5.png)
 
 mstch is a complete implementation of [{{mustache}}](http://mustache.github.io/) 
 templates using modern C++. It's compliant with [specifications](https://github.com/mustache/spec)
-v1.1.3, including the lambda module.
+v1.4.2, including the lambda module.
 
-[![Try it online](https://img.shields.io/badge/try%20it-online-blue.svg)](http://melpon.org/wandbox/permlink/EqyOe7IBRYPGVk5f)
-[![GitHub version](https://badge.fury.io/gh/no1msd%2Fmstch.svg)](http://badge.fury.io/gh/no1msd%2Fmstch)
-[![Build Status](https://travis-ci.org/no1msd/mstch.svg?branch=master)](https://travis-ci.org/no1msd/mstch)
-[![Build status](https://ci.appveyor.com/api/projects/status/d6mxp0uba5646x16?svg=true)](https://ci.appveyor.com/project/no1msd/mstch)
+[![GitHub version](https://badge.fury.io/gh/dbuzinski%2Fmstch.svg)](http://badge.fury.io/gh/dbuzinski%2Fmstch)
+[![Build Status](https://github.com/dbuzinski/mstch/actions/workflows/ci.yml/badge.svg)](https://github.com/dbuzinski/mstch/actions/workflows/ci.yml)
 
 ## Supported features
 
-mstch supports the complete feature set described in the `mustache(5)` [manpage](http://mustache.github.com/mustache.5.html):
+mstch supports the complete feature set described in the `mustache(5)` [manpage](https://mustache.github.io/mustache.5.html):
 
- - JSON-like data structure using [Boost.Variant](http://www.boost.org/libs/variant)
+ - JSON-like data structure using standard C++ types
  - variables, sections, inverted sections
  - partials
  - changing the delimiter
- - C++11 lambdas
+ - C++ lambdas
  - C++ objects as view models
 
 ## Basic usage
@@ -63,7 +61,7 @@ using map = std::map<const std::string, node>;
 using array = std::vector<node>;
 ```
 
-`mstch::node` is a `boost::variant` that can hold a `std::string`, `int`, 
+`mstch::node` is a `std::variant` type that can hold a `std::string`, `int`, 
 `double`, `bool`, `mstch::lambda` or a `std::shared_ptr<mstch::object>` 
 (see below), also a map or an array recursively. Essentially it works just like 
 a JSON object.
@@ -104,7 +102,7 @@ Output:
 
 ### Lambdas
 
-C++11 lambda expressions can be used to add logic to your templates. Like a
+C++ lambdas can be used to add logic to your templates. Like a
 `const char*` literal, lambdas can be implicitly converted to `bool`, so they
 must be wrapped in a `mstch::lambda` object when used in a `mstch::node`. The 
 lambda expression passed to `mstch::lambda` must itself return a `mstch::node`.
@@ -212,69 +210,55 @@ mstch::config::escape = [](const std::string& str) -> std::string {
 
 ## Requirements
 
- - A C++ compiler with decent C++11 support. Currently tested with:
-   - GCC 4.7, 4.8, 4.9, 5.1
-   - clang 3.5, 3.6, 3.7 (both libstdc++ and libc++ are supported)
-   - MSVC 2013, 2015
- - Boost 1.54+ for [Boost.Variant](http://www.boost.org/libs/variant)
- - CMake 3.0+ for building
+ - A C++17 compliant compiler. Currently tested with:
+   - GCC 7.0+
+   - Clang 5.0+
+   - MSVC 2017+
+ - Bazel 7.0+ for building
 
 ## Using mstch in your project
 
-If you are using CMake, the easiest way to include mstch in your project is to 
-copy the whole directory to your source tree, and use `add_subdirectory` in your 
-CMakeLists.txt. This will set a variable named `mstch_INCLUDE_DIR` that contains 
-its include path, and add a static library target named `mstch`. For example:
+If you are using Bazel, you can include mstch in your project by adding it as a dependency in your `MODULE.bazel` file:
 
-```cmake
-add_subdirectory(external/mstch)
-include_directories(${mstch_INCLUDE_DIR})
-target_link_libraries(your_project mstch)
+```python
+bazel_dep(name = "mstch", version = "2.0.0")
 ```
 
-If you prefer to install the library globally, you can simply do the following 
-from the root of the source tree:
+Then in your `BUILD` file:
+
+```python
+cc_library(
+    name = "your_library",
+    deps = ["@mstch//:mstch"],
+)
+```
+
+### Building and Testing
+
+To build the library and run tests:
 
 ```bash
- $ mkdir build
- $ cd build
- $ cmake ..
- $ make
- $ make install
+# Build the library
+bazel build //:mstch
+
+# Run tests
+bazel test //:mstch_test
+
+# Run benchmarks
+bazel run //:benchmark
 ```
 
-The install command may require root privileges. This will also install CMake 
-config files, so you can use use `find_package` in your CMakeLists.txt:
+### Running Benchmarks
 
-```cmake
-find_package(mstch)
-target_link_libraries(your_project mstch::mstch)
-```
-
-## Running the unit tests
-
-Unit tests are using the [Catch](https://github.com/philsquared/Catch) framework
-and [rapidjson](http://rapidjson.org/) to parse the
-[Mustache specifications](https://github.com/mustache/spec), all of which are 
-included in the repository as git submodules. Various 
-[Boost](http://www.boost.org/) libraries are also required to build them.
-
-Don't forget to initialize submodules:
+The project includes Google Benchmark for performance testing. To run the benchmarks:
 
 ```bash
- $ git submodule init
- $ git submodule update
+# Run with optimizations enabled
+bazel build -c opt //:benchmark
+./bazel-bin/benchmark --benchmark_repetitions=5 --benchmark_report_aggregates_only=true
 ```
 
-To build and run the unit tests:
-
-```bash
- $ mkdir build
- $ cd build
- $ cmake -DWITH_UNIT_TESTS=ON ..
- $ make
- $ make test
-```
+The benchmarks will provide detailed timing information for various template operations.
 
 ## License
 
