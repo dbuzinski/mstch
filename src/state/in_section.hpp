@@ -1,8 +1,5 @@
 #pragma once
 
-#include <sstream>
-#include <vector>
-
 #include "render_state.hpp"
 #include "template_type.hpp"
 
