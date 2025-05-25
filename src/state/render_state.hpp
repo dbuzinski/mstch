@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "token.hpp"
 
 namespace mstch {

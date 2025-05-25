@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "mstch/mstch.hpp"
 #include "render_context.hpp"
 

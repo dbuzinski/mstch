@@ -2,7 +2,6 @@
 
 #include "render_context.hpp"
 #include "mstch/mstch.hpp"
-#include "utils.hpp"
 #include "render_node.hpp"
 
 namespace mstch {
